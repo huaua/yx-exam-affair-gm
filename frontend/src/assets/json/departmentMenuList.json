@@ -1,0 +1,118 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "path": "/home/index",
+      "name": "home",
+      "component": "/home/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "首页",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": true,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/classroom/classroom",
+      "name": "classroom",
+      "component": "/classroom/classroom/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "教室管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/teacher/teacher",
+      "name": "teacher",
+      "component": "/teacher/teacher/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "教职工管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/judgeExpert/expertDatabase",
+      "name": "expertDatabase",
+      "component": "/judgeExpert/expertDatabase/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "专家库管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/classroom/classroomRecruit",
+      "name": "classroomRecruit",
+      "component": "/classroom/classroomRecruit/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "考场征集",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/teacher/teacherSubmit",
+      "name": "teacherSubmit",
+      "component": "/teacher/teacherSubmit/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "监考老师上报",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/teacher/teacherSubmitView",
+      "name": "teacherSubmitView",
+      "component": "/teacher/teacherSubmitView/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "监考老师上报查看",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/judgeExpert/judgeResponse",
+      "name": "judgeResponse",
+      "component": "/judgeExpert/judgeResponse/index",
+      "meta": {
+        "icon": "Menu",
+        "title": "评委专家上报",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    }
+  ],
+  "msg": "成功"
+}

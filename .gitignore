@@ -1,0 +1,27 @@
+frontend/node_modules/
+frontend/dist/
+backend/bin/
+backend/logs/
+backend/file/
+backend/config/config.prod.yaml
+backend/*-check.exe
+.runtime/
+.env
+*.log
+.idea/
+.vscode/
+axure-*.png
+tree-*.png
+
+# pnpm 内容寻址缓存（体积大、含超长路径）
+.pnpm-store/
+
+# 辅助/临时目录
+.codebuddy/
+
+# 临时/构建产物及副本
+_diff_*.txt
+out_tmp.txt
+build.out
+$null
+国美考务-源码+演示库/

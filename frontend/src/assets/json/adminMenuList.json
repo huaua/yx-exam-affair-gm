@@ -1,0 +1,394 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "path": "/home/index",
+      "name": "home",
+      "component": "/home/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "首页",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": true,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/user",
+      "name": "user",
+      "redirect": "/user/user",
+      "meta": {
+        "icon": "User",
+        "title": "用户管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/user/user",
+          "name": "userUser",
+          "component": "/user/user/index",
+          "meta": {
+            "icon": "User",
+            "title": "用户管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/department",
+      "name": "department",
+      "redirect": "/department/department",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "学院管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/department/department",
+          "name": "departmentDepartment",
+          "component": "/department/department/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "学院管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/classroom",
+      "name": "classroomManage",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "考场管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/classroom/classroom",
+          "name": "classroom",
+          "component": "/classroom/classroom/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "教室管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/classroom/classroomRecruitManage",
+          "name": "classroomRecruitManage",
+          "component": "/classroom/classroomRecruitManage/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "考场征集任务管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/classroom/classroomRecruit",
+          "name": "classroomRecruit",
+          "component": "/classroom/classroomRecruit/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "考场征集确认",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/classroom/usedClassroom",
+          "name": "usedClassroom",
+          "component": "/classroom/usedClassroom/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "征集考场查看",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/teacher",
+      "name": "teacher",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "监考老师管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/teacher/teacher",
+          "name": "teacher",
+          "component": "/teacher/teacher/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "教职工管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/teacher/teacherRecruitManage",
+          "name": "teacherRecruitManage",
+          "component": "/teacher/teacherRecruitManage/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "监考老师征集任务",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/teacher/teacherRecruitView",
+          "name": "teacherRecruitView",
+          "component": "/teacher/teacherRecruitView/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "征集老师审核",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/classroomArrange",
+      "name": "classroomArrange",
+      "redirect": "/classroomArrange/arrange",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "考场编排",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/classroomArrange/arrange",
+          "name": "arrange",
+          "component": "/classroomArrange/arrange/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "考场排考编排",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/classroomArrange/assign",
+          "name": "assign",
+          "component": "/classroomArrange/assign/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "考场监考分配",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/classroomArrange/arrangeView",
+          "name": "arrangeView",
+          "component": "/classroomArrange/arrangeView/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "考场编排查看",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+
+    {
+      "path": "/judgeExpert",
+      "name": "judgeExpert",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "评委专家管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/judgeExpert/expertDatabase",
+          "name": "expertDatabase",
+          "component": "/judgeExpert/expertDatabase/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "专家库管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/expertBan",
+          "name": "expertBan",
+          "component": "/judgeExpert/expertBan/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "禁止抽取管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/judgeRecruitManage",
+          "name": "judgeRecruitManage",
+          "component": "/judgeExpert/judgeRecruitManage/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "评委征集任务管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/judgeDrawManage",
+          "name": "judgeDrawManage",
+          "component": "/judgeExpert/judgeDrawManage/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "评委抽取管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/judgeReportAudit",
+          "name": "judgeReportAudit",
+          "component": "/judgeExpert/judgeReportAudit/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "评委上报审核",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/judgeResponse",
+          "name": "judgeResponse",
+          "component": "/judgeExpert/judgeResponse/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "评委应答管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/judgeQuery",
+          "name": "judgeQuery",
+          "component": "/judgeExpert/judgeQuery/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "征集评委查询",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/judgeExpert/expertEvaluation",
+          "name": "expertEvaluation",
+          "component": "/judgeExpert/expertEvaluation/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "专家评价管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    }
+  ],
+  "msg": "成功"
+}

@@ -1,0 +1,141 @@
+package IOFile
+
+import (
+	"bufio"
+	"bytes"
+	"errors"
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/sealsee/web-base/public/IOFile/cst"
+	"github.com/sealsee/web-base/public/setting"
+	"github.com/sealsee/web-base/public/utils/fileUtils"
+	"go.uber.org/zap"
+)
+
+type localHostIOFile struct {
+	publicPath  string
+	privatePath string
+	domainName  string
+}
+
+func (l *localHostIOFile) Upload(data io.Reader, suffixName, fileExt string, isPrivate bool) (string, error) {
+	buf := bytes.Buffer{}
+	_, err := buf.ReadFrom(data)
+	if err != nil {
+		return "", err
+	}
+
+	var pathAll strings.Builder
+	var filePath strings.Builder
+
+	if isPrivate {
+		pathAll.WriteString(l.privatePath)
+		if l.privatePath[len(l.privatePath)-1] != '/' {
+			pathAll.WriteString("/")
+		}
+
+		filePath.WriteString(cst.PrivateTag)
+		filePath.WriteString("/")
+	} else {
+		pathAll.WriteString(l.publicPath)
+		if l.publicPath[len(l.publicPath)-1] != '/' {
+			pathAll.WriteString("/")
+		}
+
+		filePath.WriteString(cst.PublicTag)
+		filePath.WriteString("/")
+	}
+
+	t := time.Now()
+	filePath.WriteString(t.Format("2006-01-02"))
+	filePath.WriteString("/")
+	fileName := generalFileName(suffixName, fileExt)
+
+	pathAll.WriteString(filePath.String())
+	err = fileUtils.CreateMutiDir(pathAll.String())
+	if err != nil {
+		zap.L().Error(err.Error())
+		return "", err
+	}
+
+	pathAll.WriteString(fileName)
+	file, err := os.OpenFile(pathAll.String(), os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return "", err
+	}
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	_, err = writer.Write(buf.Bytes())
+	if err != nil {
+		zap.L().Error(err.Error())
+		return "", err
+	}
+
+	writer.Flush()
+	filePath.WriteString(fileName)
+
+	domain := l.domainName
+	if domain != "" && domain[len(domain)-1] != '/' {
+		domain += "/"
+	}
+
+	return domain + cst.ResourcePrefix + "/" + filePath.String(), nil
+}
+
+func (l *localHostIOFile) Download(url string) ([]byte, error) {
+	if url == "" && !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "/"+cst.ResourcePrefix) {
+		return nil, nil
+	}
+
+	filePath := ""
+	if strings.HasPrefix(url, l.domainName) {
+		filePath = url[len(l.domainName):]
+	} else if strings.HasPrefix(url, "/"+cst.ResourcePrefix) {
+		filePath = url
+	}
+
+	if filePath == "" {
+		return nil, errors.New(url + " is error")
+	}
+
+	var pathBulider strings.Builder
+	if idx := strings.Index(filePath, cst.ResourcePrefix+"/"+cst.PublicTag); idx != -1 {
+		pathBulider.WriteString(l.publicPath)
+	} else if idx := strings.Index(filePath, cst.ResourcePrefix+"/"+cst.PrivateTag); idx != -1 {
+		pathBulider.WriteString(l.privatePath)
+	} else {
+		return nil, errors.New(url + " is error")
+	}
+	filePath = filePath[len(cst.ResourcePrefix)+1:]
+	basePath, err := filepath.Abs(pathBulider.String())
+	if err != nil {
+		return nil, err
+	}
+	targetPath, err := filepath.Abs(filepath.Join(basePath, filepath.FromSlash(filePath)))
+	if err != nil {
+		return nil, err
+	}
+	rel, err := filepath.Rel(basePath, targetPath)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+		return nil, errors.New("file path is outside configured storage")
+	}
+	if !fileUtils.IsExist(targetPath) {
+		return nil, errors.New(targetPath + " is not exist")
+	}
+	info, err := os.Stat(targetPath)
+	if err != nil || info.IsDir() || info.Size() > setting.Conf.MaxDownloadMB<<20 {
+		return nil, errors.New("file is invalid or exceeds download limit")
+	}
+	bytes, err := ioutil.ReadFile(targetPath)
+	if err != nil {
+		zap.L().Error(err.Error())
+	}
+	return bytes, err
+}

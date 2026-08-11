@@ -1,0 +1,18 @@
+logs/
+*.log
+.idea/
+.DS_Store
+cm_admit
+cm_admit.exe
+go.sum
+__debug_*
+target/
+file/
+# webres/html
+dist
+*.pid
+app.ico
+app.manifest
+app.syso
+config-prod.yaml
+gm_affair_main

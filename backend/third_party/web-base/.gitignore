@@ -1,0 +1,8 @@
+main.go
+*.xlsx
+*.xls
+config.yaml
+logs/
+.vscode/
+file/
+go.sum

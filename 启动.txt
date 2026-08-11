@@ -1,0 +1,37 @@
+启动系统：
+cd D:\2026\codex\YWJLDP
+.\scripts\start-local.ps1
+
+访问地址：
+http://127.0.0.1:8848
+
+登录账号：
+admin
+
+登录密码：
+Admin123
+
+停止系统：
+.\scripts\stop-local.ps1
+
+
+=== 开发模式（不编译 exe，直接 go run 跑最新代码）===
+
+启动（go run 后端 + Vite 前端，不生成 gm-affair-new.exe）：
+cd D:\2026\codex\YWJLDP
+.\scripts\start-dev.ps1
+
+访问地址：
+http://127.0.0.1:8848
+
+停止（仅停 go run 后端与 Vite 前端，不动 MySQL）：
+.\scripts\stop-dev.ps1
+
+注意：
+- go run 在内存中编译并直接执行，不会留下 exe 文件。
+- start-dev.ps1 启动前会自动停止已有的 go run / vite 进程，因此每次运行都会重新编译并启动最新代码。
+- 前端 Vite 为热更新，改 .vue/.ts 文件浏览器自动刷新，无需重启。
+- 若运行 .ps1 报“禁止运行脚本”，用：
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-dev.ps1
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\stop-dev.ps1
+

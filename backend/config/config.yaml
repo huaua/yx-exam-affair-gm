@@ -1,0 +1,79 @@
+name: "yx-exam-affair-gm"
+mode: dev #dev 开发模式，日志打印到控制台，prod生产模式，日志不打印控制台
+port: 30000
+version: 101
+host: http://localhost:30000
+ui_inside: outdir # 前端资源放入服务端访问，"embed":编译时打包嵌入到可执行程序内部；"outdir":访问静态资源目录
+open_browser: false # 启动后自动打开浏览器
+log:
+  level: info
+  filename: ./logs/app.log
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+datasource:
+  master:
+    driver_name: mysql
+    host: 127.0.0.1
+    user: root
+    password: 123456
+    dbname: yx_exam_affair_gm
+    port: 13306
+    max_open_conns: 200
+    max_idle_conns: 50
+  slave:
+    count: 0
+    driver_name:
+    hosts:
+    users:
+    passwords:
+    dbnames:
+    ports:
+    max_open_conns:
+    max_idle_conns:
+  redis:
+    enabled: false
+    host: 127.0.0.1
+    port: 6379
+    password: 
+    db: 0
+    pool_size: 100
+  rabbitmq:
+    enabled: false
+    host: 192.168.18.203
+    port: 5672
+    user: baoming
+    password: baoming
+  kafka:
+    enabled: false
+    Addrs:  192.168.18.203:9091
+  mongodb:
+    enabled: false
+    host: 192.168.18.203
+    port: 27017
+    dbname: monitor
+    user: baoming
+    password: baoming
+token:
+  expire_time: 30
+  secret: yxcdefghijklmn1h3a84opqrstuvwxyz
+  issuer: yx
+upload_file:
+  type: localhost     #上传地点 本地->localhost(集群部署需要做硬盘挂载,挂载路径需一直)  亚马逊->s3   移动云->eos  如果不填则默认本地当前目录
+  domain_name: http://localhost:30000   #如果本地则填写服务器域名,其他存储桶填写对应域名
+  localhost:
+    public_resource_prefix: ./file/public/   #如果type=localhost不填则默认启动目录./file/public/
+    private_resource_prefix: ./file/private/ #如果type=localhost不填则默认启动目录./file/private/
+  s3:
+    access_key_id: xxx
+    Secret_access_key: xxx
+    region: xxx
+    bucket_name: xxx
+  oss:
+    access_key_id: xxx
+    Secret_access_key: xxx
+    end_point: oss-cn-hangzhou.aliyuncs.com #若VPC下请用内部地址
+    public_bucket: art-stu1
+    public_domain: http://img.artstudent.cn
+    private_bucket: art-admin1
+    private_domain: http://admin.artstudent.cn

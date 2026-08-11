@@ -1,0 +1,98 @@
+name: "yx-exam-affair-gm"
+mode: prod
+port: 30000
+version: 101
+host: https://exam.example.edu.cn
+ui_inside: outdir
+open_browser: false
+
+log:
+  level: warn
+  filename: ./logs/app.log
+  max_size: 100
+  max_age: 30
+  max_backups: 7
+
+datasource:
+  master:
+    driver_name: mysql
+    host: 127.0.0.1
+    user: exam_app
+    password: CHANGE_VIA_GM_DB_PASSWORD
+    dbname: yx_exam_affair_gm
+    port: 3306
+    max_open_conns: 80
+    max_idle_conns: 20
+  slave:
+    count: 0
+    driver_name: ""
+    hosts: []
+    users: []
+    passwords: []
+    dbnames: []
+    ports: []
+    max_open_conns: 0
+    max_idle_conns: 0
+  redis:
+    enabled: false
+    host: 127.0.0.1
+    port: 6379
+    password: ""
+    db: 0
+    pool_size: 100
+  rabbitmq:
+    enabled: false
+    host: 127.0.0.1
+    port: 5672
+    user: ""
+    password: ""
+  kafka:
+    enabled: false
+    addrs: ""
+  mongodb:
+    enabled: false
+    host: 127.0.0.1
+    port: 27017
+    dbname: monitor
+    user: ""
+    password: ""
+
+token:
+  expire_time: 30
+  secret: CHANGE_VIA_GM_TOKEN_SECRET
+  issuer: yx-exam-affair-gm
+
+security:
+  enable_pprof: false
+  allowed_origins:
+    - https://exam.example.edu.cn
+  trusted_proxies:
+    - 127.0.0.1
+  max_request_body_mb: 20
+  max_download_mb: 100
+  read_timeout_sec: 15
+  write_timeout_sec: 60
+  idle_timeout_sec: 60
+  jwt_max_lifetime_minutes: 480
+  login_max_attempts: 5
+  login_window_minutes: 10
+
+upload_file:
+  type: localhost
+  domain_name: https://exam.example.edu.cn
+  localhost:
+    public_resource_prefix: ./file/public/
+    private_resource_prefix: ./file/private/
+  s3:
+    access_key_id: ""
+    Secret_access_key: ""
+    region: ""
+    bucket_name: ""
+  oss:
+    access_key_id: ""
+    Secret_access_key: ""
+    end_point: ""
+    public_bucket: ""
+    public_domain: ""
+    private_bucket: ""
+    private_domain: ""
