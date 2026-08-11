@@ -19,14 +19,26 @@
         <span>日期：<b>{{ taskDate }}</b></span>
       </div>
       <div class="header-search">
-        <span>教职工姓名/工号：</span>
-        <el-input v-model="searchObj.nameOrJobNo" placeholder="请输入" clearable style="width: 140px" />
-        <span>所属学院：</span>
-        <el-select v-model="searchObj.deptId" placeholder="请选择" clearable style="width: 140px">
+        <el-input
+          v-model="searchObj.nameOrJobNo"
+          placeholder="教职工姓名/工号-请输入"
+          clearable
+          style="width: 200px"
+        />
+        <el-select
+          v-model="searchObj.deptId"
+          placeholder="所属学院-请选择"
+          clearable
+          style="width: 200px"
+        >
           <el-option v-for="item in departmentEnum" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <span>监考经验：</span>
-        <el-select v-model="searchObj.invigilationExperience" placeholder="请选择" clearable style="width: 100px">
+        <el-select
+          v-model="searchObj.invigilationExperience"
+          placeholder="监考经验-请选择"
+          clearable
+          style="width: 160px"
+        >
           <el-option label="有" value="1" />
           <el-option label="无" value="2" />
         </el-select>
@@ -323,7 +335,7 @@ const columns2 = reactive<ColumnProps<Teacher.ResTeacherRecruitViewList>[]>([
   }
 ]);
 
-// 过滤：只显示未分配的老师
+// 过滤：只显示未分配的老师（实时过滤）
 const filteredTableData2 = computed(() => {
   let result = tableData2.value.filter(person => person.state === TchAssignState.UNASSIGN);
   const q = searchObj.nameOrJobNo?.trim();
@@ -505,7 +517,7 @@ defineExpose({ acceptParams });
   .header-search {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     margin-left: auto;
   }
 }
