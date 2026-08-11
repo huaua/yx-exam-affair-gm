@@ -12,6 +12,26 @@ $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $repoRoot
 
+# Auto-locate git if not in PATH (so the script works even on a freshly opened
+# PowerShell that hasn't picked up user-level PATH yet)
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    $candidates = @(
+        "C:\Program Files\Git\cmd\git.exe",
+        "C:\Program Files\Git\bin\git.exe",
+        "C:\Program Files (x86)\Git\cmd\git.exe",
+        "D:\Program Files\Git\cmd\git.exe",
+        "D:\Program Files (x86)\Git\cmd\git.exe",
+        "$env:USERPROFILE\.workbuddy\vendor\PortableGit\cmd\git.exe"
+    )
+    $found = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if ($found) {
+        $env:PATH = (Split-Path $found) + ";" + $env:PATH
+    } else {
+        Write-Error "git not found. Please install Git for Windows and add its bin/cmd to PATH."
+        exit 1
+    }
+}
+
 try { $gitVer = & git --version 2>&1 } catch { Write-Error "git not found in PATH"; exit 1 }
 Write-Host "git: $gitVer"
 
