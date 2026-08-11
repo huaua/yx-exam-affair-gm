@@ -471,47 +471,6 @@ PREPARE add_stmt FROM @add_sql;
 EXECUTE add_stmt;
 DEALLOCATE PREPARE add_stmt;
 
--- =====================================================================
--- 20260811 监考老师取消上报替换链路改造
--- 问题：原替换逻辑直接修改 ea_tch_task_report 原记录中的老师信息，导致原上报人、原审核状态等历史被覆盖，无法追溯。
--- 方案：原记录软删除，替换老师新增一条有效记录；新记录通过 replaced_from 指向被替换的原 report_id。
--- 说明：当前有效记录 deleted=1，历史记录 deleted=2；删除操作人和时间记录在 update_by、update_time。
--- =====================================================================
-
-SET @col_tch_report_replaced_from = (
-  SELECT DATA_TYPE
-  FROM information_schema.columns
-  WHERE table_schema = DATABASE()
-    AND table_name = 'ea_tch_task_report'
-    AND column_name = 'replaced_from'
-);
-SET @ddl = IF(
-  @col_tch_report_replaced_from IS NULL,
-  "ALTER TABLE ea_tch_task_report ADD COLUMN replaced_from bigint DEFAULT NULL COMMENT '被替换的原上报记录ID' AFTER state",
-  'SELECT 1'
-);
-PREPARE stmt FROM @ddl;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
-
-SET @idx_tch_report_replaced_from = (
-  SELECT COUNT(1)
-  FROM information_schema.statistics
-  WHERE table_schema = DATABASE()
-    AND table_name = 'ea_tch_task_report'
-    AND index_name = 'idx_tch_report_replaced_from'
-);
-SET @ddl = IF(
-  @idx_tch_report_replaced_from = 0,
-  'ALTER TABLE ea_tch_task_report ADD INDEX idx_tch_report_replaced_from (replaced_from)',
-  'SELECT 1'
-);
-PREPARE stmt FROM @ddl;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
-
-
-
 -- ============================================================================
 -- SOURCE: update_260729_judge_draw_management.sql
 -- ============================================================================
@@ -684,3 +643,42 @@ SET @add_sql = IF(
 PREPARE add_stmt FROM @add_sql;
 EXECUTE add_stmt;
 DEALLOCATE PREPARE add_stmt;
+
+-- =====================================================================
+-- 20260811 监考老师取消上报替换链路改造
+-- 问题：原替换逻辑直接修改 ea_tch_task_report 原记录中的老师信息，导致原上报人、原审核状态等历史被覆盖，无法追溯。
+-- 方案：原记录软删除，替换老师新增一条有效记录；新记录通过 replaced_from 指向被替换的原 report_id。
+-- 说明：当前有效记录 deleted=1，历史记录 deleted=2；删除操作人和时间记录在 update_by、update_time。
+-- =====================================================================
+
+SET @col_tch_report_replaced_from = (
+  SELECT DATA_TYPE
+  FROM information_schema.columns
+  WHERE table_schema = DATABASE()
+    AND table_name = 'ea_tch_task_report'
+    AND column_name = 'replaced_from'
+);
+SET @ddl = IF(
+  @col_tch_report_replaced_from IS NULL,
+  "ALTER TABLE ea_tch_task_report ADD COLUMN replaced_from bigint DEFAULT NULL COMMENT '被替换的原上报记录ID' AFTER state",
+  'SELECT 1'
+);
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @idx_tch_report_replaced_from = (
+  SELECT COUNT(1)
+  FROM information_schema.statistics
+  WHERE table_schema = DATABASE()
+    AND table_name = 'ea_tch_task_report'
+    AND index_name = 'idx_tch_report_replaced_from'
+);
+SET @ddl = IF(
+  @idx_tch_report_replaced_from = 0,
+  'ALTER TABLE ea_tch_task_report ADD INDEX idx_tch_report_replaced_from (replaced_from)',
+  'SELECT 1'
+);
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

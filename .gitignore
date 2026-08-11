@@ -5,6 +5,7 @@ backend/logs/
 backend/file/
 backend/config/config.prod.yaml
 backend/*-check.exe
+backend/*.exe
 .runtime/
 .env
 *.log
