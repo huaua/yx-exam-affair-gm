@@ -26,3 +26,6 @@ out_tmp.txt
 build.out
 $null
 国美考务-源码+演示库/
+
+# 截图脚本的依赖（puppeteer-core 等，体积大、由 pnpm install 重新生成）
+scripts/screenshots/node_modules/
