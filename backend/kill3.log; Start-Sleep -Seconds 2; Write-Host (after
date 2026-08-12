@@ -1,1 +1,0 @@
-RC=0  kill, running: {0} -f $(if(Get-Process -Name 'gm-affair' -ErrorAction SilentlyContinue){((Get-Process -Name 'gm-affair').Id -join ',')}else{'no'}))

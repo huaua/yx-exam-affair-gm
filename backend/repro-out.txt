@@ -1,2 +1,0 @@
-go: downloading github.com/go-sql-driver/mysql v1.7.1
-repro-test.go:8:2: module lookup disabled by GOPROXY=off
