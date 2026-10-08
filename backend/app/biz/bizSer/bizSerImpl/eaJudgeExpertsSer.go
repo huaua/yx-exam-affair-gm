@@ -668,6 +668,9 @@ type EaJudgeExpertsExportStruct struct {
 	ExpertTypeMap map[string]string
 	TitleMap      map[string]string
 	Query         *bizDto.EaJudgeExpertsQuery
+	// 专家类型为逗号分隔的多值存储，导出按包含匹配；在入口构造一次，供所有分页复用
+	typeCond string
+	typeArg  interface{}
 }
 
 func (h *EaJudgeExpertsExportStruct) Title() string {
@@ -687,12 +690,10 @@ func (h *EaJudgeExpertsExportStruct) Rows(p *page.Page) []map[string]interface{}
 	if h.Query.BannedOnly {
 		conditions = append(conditions, "EXISTS (SELECT 1 FROM ea_judge_expert_ban b WHERE b.expert_id = ea_judge_experts.expert_id AND b.deleted = 1)")
 	}
-	// 专家类型支持多选存储（逗号分隔），导出时需按包含匹配，与列表查询保持一致
-	typeFilter := strings.TrimSpace(h.Query.Type)
-	if typeFilter != "" {
-		conditions = append(conditions, "FIND_IN_SET(?, type) > 0")
-		args = append(args, typeFilter)
-		h.Query.Type = ""
+	// 专家类型条件在入口已构造并固定到 typeCond，所有分页复用，避免分页循环时丢失
+	if h.typeCond != "" {
+		conditions = append(conditions, h.typeCond)
+		args = append(args, h.typeArg)
 	}
 	var condition interface{}
 	if len(conditions) > 0 {
@@ -770,7 +771,15 @@ func (judgeExperts *EaJudgeExpertsService) ExportEaJudgeExperts(q *bizDto.EaJudg
 	for _, v := range sysDicDataService.ListSysDictData(&userDto.SysDictDataQuery{DictType: cst.BIZ_DICT_EXPERT_TITLE, State: strconv.Itoa(cst.YES)}, &page.Page{CurPage: 1, PageSize: page.MAX_PAGE_SIZE}) {
 		titleMap[v.DictValue] = v.DictLabel
 	}
-	return excel.NewExcel().ExportSync(&EaJudgeExpertsExportStruct{Query: q, DeptMap: deptMap, ExpertTypeMap: expertTypeMap, TitleMap: titleMap})
+	h := &EaJudgeExpertsExportStruct{Query: q, DeptMap: deptMap, ExpertTypeMap: expertTypeMap, TitleMap: titleMap}
+	// 专家类型支持多选存储（逗号分隔），导出时按包含匹配，与列表查询保持一致；
+	// 在入口构造一次条件并清空 q.Type，避免产生 type = '本科' 的等值条件，也避免分页循环时条件丢失
+	if typeFilter := strings.TrimSpace(q.Type); typeFilter != "" {
+		h.typeCond = "FIND_IN_SET(?, type) > 0"
+		h.typeArg = typeFilter
+		q.Type = ""
+	}
+	return excel.NewExcel().ExportSync(h)
 }
 
 func expertAuditStatusText(status int) string {
