@@ -668,9 +668,9 @@ type EaJudgeExpertsExportStruct struct {
 	ExpertTypeMap map[string]string
 	TitleMap      map[string]string
 	Query         *bizDto.EaJudgeExpertsQuery
-	// 专家类型为逗号分隔的多值存储，导出按包含匹配；在入口构造一次，供所有分页复用
-	typeCond string
-	typeArg  interface{}
+	// 自定义条件（专家类型 FIND_IN_SET、是否评价、仅禁止抽取等），在入口构造一次，供所有分页复用
+	extraConds []string
+	extraArgs  []interface{}
 }
 
 func (h *EaJudgeExpertsExportStruct) Title() string {
@@ -685,21 +685,12 @@ func (h *EaJudgeExpertsExportStruct) HeaderColumn() []string {
 }
 
 func (h *EaJudgeExpertsExportStruct) Rows(p *page.Page) []map[string]interface{} {
-	conditions := make([]string, 0)
-	args := make([]interface{}, 0)
-	if h.Query.BannedOnly {
-		conditions = append(conditions, "EXISTS (SELECT 1 FROM ea_judge_expert_ban b WHERE b.expert_id = ea_judge_experts.expert_id AND b.deleted = 1)")
-	}
-	// 专家类型条件在入口已构造并固定到 typeCond，所有分页复用，避免分页循环时丢失
-	if h.typeCond != "" {
-		conditions = append(conditions, h.typeCond)
-		args = append(args, h.typeArg)
-	}
+	// 自定义条件在入口已构造并固定到 extraConds/extraArgs，所有分页复用，避免分页循环时条件丢失
 	var condition interface{}
-	if len(conditions) > 0 {
-		condition = strings.Join(conditions, " AND ")
+	if len(h.extraConds) > 0 {
+		condition = strings.Join(h.extraConds, " AND ")
 	}
-	result := eaJudgeExpertsDao.ListMapWithCondition(h.Query, p, condition, args...)
+	result := eaJudgeExpertsDao.ListMapWithCondition(h.Query, p, condition, h.extraArgs...)
 	for _, res := range result {
 		// fmt.Println(res)
 		// 数据库中 intro 字段为 text，map 转出来是 []byte，excelize 不识别而写入空字符串。
@@ -772,12 +763,31 @@ func (judgeExperts *EaJudgeExpertsService) ExportEaJudgeExperts(q *bizDto.EaJudg
 		titleMap[v.DictValue] = v.DictLabel
 	}
 	h := &EaJudgeExpertsExportStruct{Query: q, DeptMap: deptMap, ExpertTypeMap: expertTypeMap, TitleMap: titleMap}
-	// 专家类型支持多选存储（逗号分隔），导出时按包含匹配，与列表查询保持一致；
-	// 在入口构造一次条件并清空 q.Type，避免产生 type = '本科' 的等值条件，也避免分页循环时条件丢失
+	// 以下筛选构建逻辑与列表查询 ListEaJudgeExperts 保持一致，且所有条件在入口构造一次（供导出分页多次复用）
+	// 模糊搜索字段：按包含匹配，避免等值匹配导致"仅导出完全相等"的问题（如擅长科目）
+	q.AddLikeAll("name", q.Name)
+	q.AddLikeAll("id_card", q.IdCard)
+	q.AddLikeAll("phone_no", q.PhoneNo)
+	q.AddLikeAll("good_subjects", q.GoodSubjects)
+	q.AddLikeAll("unit_name", q.UnitName)
+	q.AddLikeAll("title", q.Title)
+	q.AddLikeAll("init_major", q.InitMajor)
+	q.AddLikeAll("final_major", q.FinalMajor)
+	// 专家类型为逗号分隔多值存储，按包含匹配（FIND_IN_SET），并清空 q.Type 避免产生 type = 'xxx' 的等值条件
 	if typeFilter := strings.TrimSpace(q.Type); typeFilter != "" {
-		h.typeCond = "FIND_IN_SET(?, type) > 0"
-		h.typeArg = typeFilter
+		h.extraConds = append(h.extraConds, "FIND_IN_SET(?, type) > 0")
+		h.extraArgs = append(h.extraArgs, typeFilter)
 		q.Type = ""
+	}
+	// 是否评价
+	if q.IsEvaluated == cst.YES {
+		h.extraConds = append(h.extraConds, "TRIM(COALESCE(evaluation, '')) <> ''")
+	} else if q.IsEvaluated == cst.NO {
+		h.extraConds = append(h.extraConds, "TRIM(COALESCE(evaluation, '')) = ''")
+	}
+	// 仅查询禁止抽取名单
+	if q.BannedOnly {
+		h.extraConds = append(h.extraConds, "EXISTS (SELECT 1 FROM ea_judge_expert_ban b WHERE b.expert_id = ea_judge_experts.expert_id AND b.deleted = 1)")
 	}
 	return excel.NewExcel().ExportSync(h)
 }
