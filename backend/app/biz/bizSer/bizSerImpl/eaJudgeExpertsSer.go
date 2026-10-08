@@ -682,11 +682,23 @@ func (h *EaJudgeExpertsExportStruct) HeaderColumn() []string {
 }
 
 func (h *EaJudgeExpertsExportStruct) Rows(p *page.Page) []map[string]interface{} {
-	var condition interface{}
+	conditions := make([]string, 0)
+	args := make([]interface{}, 0)
 	if h.Query.BannedOnly {
-		condition = "EXISTS (SELECT 1 FROM ea_judge_expert_ban b WHERE b.expert_id = ea_judge_experts.expert_id AND b.deleted = 1)"
+		conditions = append(conditions, "EXISTS (SELECT 1 FROM ea_judge_expert_ban b WHERE b.expert_id = ea_judge_experts.expert_id AND b.deleted = 1)")
 	}
-	result := eaJudgeExpertsDao.ListMapWithCondition(h.Query, p, condition)
+	// 专家类型支持多选存储（逗号分隔），导出时需按包含匹配，与列表查询保持一致
+	typeFilter := strings.TrimSpace(h.Query.Type)
+	if typeFilter != "" {
+		conditions = append(conditions, "FIND_IN_SET(?, type) > 0")
+		args = append(args, typeFilter)
+		h.Query.Type = ""
+	}
+	var condition interface{}
+	if len(conditions) > 0 {
+		condition = strings.Join(conditions, " AND ")
+	}
+	result := eaJudgeExpertsDao.ListMapWithCondition(h.Query, p, condition, args...)
 	for _, res := range result {
 		// fmt.Println(res)
 		// 数据库中 intro 字段为 text，map 转出来是 []byte，excelize 不识别而写入空字符串。

@@ -69,10 +69,33 @@ function Stop-ByCommandLine {
     return $count
 }
 
-# ---------- 1. MySQL（若已运行则跳过；否则拉起，但不在此脚本中关闭） ----------
+# ---------- 1. MySQL（确保 13306 上跑的是本项目实例；否则拉起，但不在此脚本中关闭） ----------
 if (-not (Test-Path $mysqlServer)) {
     throw "Local MySQL runtime was not found under .runtime\mysql."
 }
+
+# 端口互串防护：若 13306 被其他项目的 MySQL 实例占用，先停掉再拉起本项目实例。
+$projectDataDir = (Join-Path $runtime "mysql-data").Replace('/', '\').TrimEnd('\').ToLower()
+$mysqlListeners = $null
+try { $mysqlListeners = Get-NetTCPConnection -LocalPort 13306 -State Listen -ErrorAction SilentlyContinue } catch { }
+if ($mysqlListeners) {
+    foreach ($l in $mysqlListeners) {
+        $cmd = $null
+        try { $cmd = (Get-CimInstance Win32_Process -Filter "ProcessId=$($l.OwningProcess)" -ErrorAction SilentlyContinue).CommandLine } catch { }
+        if ($cmd) {
+            $m = [regex]::Match($cmd, '--datadir[=\s]+"?([^"\s]+)"?')
+            if ($m.Success) {
+                $dd = $m.Groups[1].Value.Replace('/', '\').TrimEnd('\').ToLower()
+                if ($dd -ne $projectDataDir) {
+                    Write-Host "Stopping foreign MySQL (PID $($l.OwningProcess), datadir=$dd) holding port 13306..." -ForegroundColor Yellow
+                    Stop-Process -Id $l.OwningProcess -Force -ErrorAction SilentlyContinue
+                    Start-Sleep -Seconds 2
+                }
+            }
+        }
+    }
+}
+
 if (-not (Test-MySql)) {
     $mysqlProcess = Start-Process -FilePath $mysqlServer -ArgumentList "--defaults-file=$mysqlIni" -WindowStyle Hidden -PassThru
     Set-Content -LiteralPath (Join-Path $runtime "mysql-process.id") -Value $mysqlProcess.Id -Encoding ascii
